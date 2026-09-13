@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Update the CI Node.js runtime to Node 26 while retaining the Node.js 22.13 development minimum.
 - Honor GitHub secondary retry delays in REST and GraphQL, pause queued requests, and retain stats cooldowns across redirects.
 - Restore iOS builds and workflow-run display, and keep local Git reference probes bounded and offline.
 - Respect repository submenu timeouts, preserve requests needed by other menus, and allow retries after bounded cancellation cleanup.
