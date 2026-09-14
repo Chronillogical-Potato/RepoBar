@@ -3,6 +3,28 @@
     <channel>
         <title>RepoBar</title>
         <item>
+            <title>0.9.1</title>
+            <pubDate>Sun, 13 Sep 2026 19:24:15 -0700</pubDate>
+            <link>https://raw.githubusercontent.com/steipete/RepoBar/main/appcast.xml</link>
+            <sparkle:version>31</sparkle:version>
+            <sparkle:shortVersionString>0.9.1</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<h2>RepoBar 0.9.1</h2>
+<p><strong>Highlights:</strong> GitHub secondary rate limits are honored, iOS builds and workflow-run display are restored, and submenu timeouts no longer cancel other menus.</p>
+<ul>
+<li>Honor GitHub secondary retry delays in REST and GraphQL, pause queued requests, and retain stats cooldowns across redirects.</li>
+<li>Restore iOS builds and workflow-run display, and keep local Git reference probes bounded and offline.</li>
+<li>Respect repository submenu timeouts, preserve requests needed by other menus, and allow retries after bounded cancellation cleanup.</li>
+<li>Honor developer CLI token/host overrides and Enterprise REST paths, keep JSON stdout clean, and implement the documented GraphQL raw-response flag.</li>
+<li>Update SwiftLog to 1.15.1 and Zod to 4.6.2 for app logging and GraphQL developer tooling.</li>
+<li><strong>Compatibility:</strong> Development tooling requires Node.js 22.13 or newer, matching the existing pnpm requirement; update pnpm to 11.26 and pin CI tooling with verified downloads.</li>
+<li>Update the CI Node.js runtime to Node 26 while retaining the Node.js 22.13 development minimum.</li>
+</ul>
+<p><a href="https://github.com/steipete/RepoBar/blob/main/CHANGELOG.md">View full changelog</a></p>
+]]></description>
+            <enclosure url="https://github.com/steipete/RepoBar/releases/download/v0.9.1/RepoBar-0.9.1.zip" length="26605543" type="application/octet-stream" sparkle:edSignature="Zm9QGNQGhpFg+5ixqAAl577dPFAnyrVeGq7KOhGa/JltKnhTM/OumBDQqhnYD0LzU+YiJgNgU/QQd76ihqoeCQ=="/>
+        </item>
+        <item>
             <title>0.9.0</title>
             <pubDate>Mon, 07 Sep 2026 01:59:10 -0700</pubDate>
             <link>https://raw.githubusercontent.com/steipete/RepoBar/main/appcast.xml</link>
