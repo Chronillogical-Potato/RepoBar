@@ -1,14 +1,16 @@
 # Changelog
 
-## Unreleased
+## 0.9.1 - 2026-09-13
 
-- Update the CI Node.js runtime to Node 26 while retaining the Node.js 22.13 development minimum.
+**Highlights:** GitHub secondary rate limits are honored, iOS builds and workflow-run display are restored, and submenu timeouts no longer cancel other menus.
+
 - Honor GitHub secondary retry delays in REST and GraphQL, pause queued requests, and retain stats cooldowns across redirects.
 - Restore iOS builds and workflow-run display, and keep local Git reference probes bounded and offline.
 - Respect repository submenu timeouts, preserve requests needed by other menus, and allow retries after bounded cancellation cleanup.
 - Honor developer CLI token/host overrides and Enterprise REST paths, keep JSON stdout clean, and implement the documented GraphQL raw-response flag.
-- **Compatibility:** Development tooling requires Node.js 22.13 or newer, matching the existing pnpm requirement; update pnpm to 11.26 and pin CI tooling with verified downloads.
 - Update SwiftLog to 1.15.1 and Zod to 4.6.2 for app logging and GraphQL developer tooling.
+- **Compatibility:** Development tooling requires Node.js 22.13 or newer, matching the existing pnpm requirement; update pnpm to 11.26 and pin CI tooling with verified downloads.
+- Update the CI Node.js runtime to Node 26 while retaining the Node.js 22.13 development minimum.
 
 ## 0.9.0 - 2026-09-07
 

@@ -32,8 +32,8 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.steipete.repobar.ios
         INFOPLIST_FILE: Resources/Info.plist
         TARGETED_DEVICE_FAMILY: "1,2"
-        MARKETING_VERSION: 0.1.0
-        CURRENT_PROJECT_VERSION: 1
+        MARKETING_VERSION: 0.9.1
+        CURRENT_PROJECT_VERSION: 31
         CODE_SIGN_ENTITLEMENTS: RepoBariOS.entitlements
         SWIFT_STRICT_CONCURRENCY: complete
     info:
@@ -72,8 +72,8 @@ targets:
         DEVELOPMENT_TEAM: 2ZAC4GM7GD
         PRODUCT_BUNDLE_IDENTIFIER: com.steipete.repobar.ios.ShareExtension
         INFOPLIST_FILE: ShareExtension/Info.plist
-        MARKETING_VERSION: 0.1.0
-        CURRENT_PROJECT_VERSION: 1
+        MARKETING_VERSION: 0.9.1
+        CURRENT_PROJECT_VERSION: 31
         APPLICATION_EXTENSION_API_ONLY: YES
         SWIFT_STRICT_CONCURRENCY: complete
     info:
