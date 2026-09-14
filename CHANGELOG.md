@@ -1,5 +1,7 @@
 # Changelog
 
+## Unreleased
+
 ## 0.9.1 - 2026-09-13
 
 **Highlights:** GitHub secondary rate limits are honored, iOS builds and workflow-run display are restored, and submenu timeouts no longer cancel other menus.
