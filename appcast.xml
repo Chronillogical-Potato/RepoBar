@@ -3,6 +3,29 @@
     <channel>
         <title>RepoBar</title>
         <item>
+            <title>0.9.2</title>
+            <pubDate>Sat, 19 Sep 2026 20:27:40 -0700</pubDate>
+            <link>https://raw.githubusercontent.com/steipete/RepoBar/main/appcast.xml</link>
+            <sparkle:version>32</sparkle:version>
+            <sparkle:shortVersionString>0.9.2</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<h2>RepoBar 0.9.2</h2>
+<p><strong>Highlights:</strong> Compact stacked API quotas and clearer, more reliable GitHub status.</p>
+<ul>
+<li>Stack labeled REST and GraphQL quotas in the menu bar, with exact request and point counts on hover.</li>
+<li>Preserve GitHub GraphQL error messages, avoid caching failed responses, and recover from invalid cached data instead of showing a misleading missing-data error.</li>
+<li>Prefer the newest quota sample, keep search limits separate from REST core, and show GraphQL throttling without confusing remaining quota with temporary pauses.</li>
+</ul>
+<ul>
+<li>Send CLI errors to stderr so failed commands do not mix diagnostics into stdout or JSON pipelines.</li>
+<li>Preserve worktree paths containing whitespace, Unicode, or <code>worktree </code> and nested branch names when listing local worktrees and loading their metadata.</li>
+<li>Stop manual local Sync, Rebase, and Reset when fetching fails, preserving local work and reporting Git&#x27;s error instead of continuing against stale upstream refs.</li>
+</ul>
+<p><a href="https://github.com/steipete/RepoBar/blob/main/CHANGELOG.md">View full changelog</a></p>
+]]></description>
+            <enclosure url="https://github.com/steipete/RepoBar/releases/download/v0.9.2/RepoBar-0.9.2.zip" length="26665659" type="application/octet-stream" sparkle:edSignature="DdY+BfNV6FiYiZ7CkcrzPrAa/hD5C4AIGAd9clCbFHKE4ykTxH/V2n0HzXpjfjc66rvOCPRN+/gI55JpqGt6Dw=="/>
+        </item>
+        <item>
             <title>0.9.1</title>
             <pubDate>Sun, 13 Sep 2026 19:24:15 -0700</pubDate>
             <link>https://raw.githubusercontent.com/steipete/RepoBar/main/appcast.xml</link>
@@ -39,27 +62,6 @@
 <p><a href="https://github.com/steipete/RepoBar/blob/main/CHANGELOG.md">View full changelog</a></p>
 ]]></description>
             <enclosure url="https://github.com/steipete/RepoBar/releases/download/v0.9.0/RepoBar-0.9.0.zip" length="26709862" type="application/octet-stream" sparkle:edSignature="PjqaT/0fuFCkG7TszV7CIusnAqCnF8GaumQbYAd+LrUMixorzcb0ljdPX8nV8m7ovgBeoF6ytyKatC6hdcxRBw=="/>
-        </item>
-        <item>
-            <title>0.8.8</title>
-            <pubDate>Sun, 06 Sep 2026 18:34:11 -0700</pubDate>
-            <link>https://raw.githubusercontent.com/steipete/RepoBar/main/appcast.xml</link>
-            <sparkle:version>29</sparkle:version>
-            <sparkle:shortVersionString>0.8.8</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-            <description><![CDATA[<h2>RepoBar 0.8.8</h2>
-<p><strong>Highlights:</strong> CLI flags now behave as requested, and workflow names make CI runs for the same commit easy to distinguish.</p>
-<ul>
-<li>Honor <code>local-reset --yes</code>, <code>checkout --open</code>, and <code>repo --traffic</code>, <code>--heatmap</code>, and <code>--release</code>, which were silently ignored (thanks @devYRPauli). (#113)</li>
-<li>Distinguish CI runs for the same commit by showing workflow names in the menu and CLI output (thanks @jiimaho). (#115)</li>
-<li>Declare the macOS 15 minimum in the app bundle so Sparkle does not offer incompatible updates to older macOS versions.</li>
-<li>Honor <code>repobar changelog --release</code> and count newer dated entries when the Unreleased section is empty (thanks @devYRPauli). (#109)</li>
-<li>Rewrite the README around installation and first use, with dynamic project badges and tighter links to reference documentation.</li>
-<li>Update AppAuth to 3.0.0 and refresh Apollo, Kingfisher, Sparkle, swift-log, Swiftdansi, GraphQL, Octokit, tsx, pnpm, and the Node.js setup action.</li>
-</ul>
-<p><a href="https://github.com/steipete/RepoBar/blob/main/CHANGELOG.md">View full changelog</a></p>
-]]></description>
-            <enclosure url="https://github.com/steipete/RepoBar/releases/download/v0.8.8/RepoBar-0.8.8.zip" length="26673435" type="application/octet-stream" sparkle:edSignature="7JOtJ4z9UX9Xcb2EY/PgLtLdK12+eIzW7iJWXIKMtBXqFirflsX7ikBaKyRtiO9y0GH3diq+aLpW3YC4AuTRDA=="/>
         </item>
         <item>
             <title>0.8.7</title>
