@@ -93,6 +93,8 @@ Current tables:
   time, and rate-limit metadata.
 - `graphql_responses`: endpoint, operation, request-body key, response body,
   and fetch time for GraphQL calls such as contribution heatmaps.
+- `graphql_quota_snapshots`: endpoint and last observed response-header quota,
+  scoped to the account database and restored only before its reset time.
 - `rate_limits`: GitHub resource name, remaining budget, reset time, and last
   error.
 
@@ -108,6 +110,14 @@ Current behavior:
 - GraphQL calls use the persistent cache for 15 minutes and fall back to stale
   cached response bodies when GitHub is rate-limited, offline, or temporarily
   unavailable.
+- GraphQL quota observations survive restarts even when all repository responses
+  come from cache. Restoring a sample makes no API request and does not change
+  its original observation time. Expired samples are not restored.
+- When no current GraphQL quota sample exists (including upgrades from older
+  caches), the first query refreshes from GitHub even if its data is cached.
+  This makes at most one bootstrap refresh attempt, costs that query's usual
+  points, and still permits stale-cache fallback on failure. Other cached
+  queries do not fan out into additional bootstrap requests.
 - On menu refresh, RepoBar seeds the first visible repository rows from cached
   `/user/repos` pages plus cached repo-detail PR counts before live GitHub
   hydration finishes. Rows without cached PR counts stay out of that seed so
@@ -132,6 +142,11 @@ Current behavior:
   That endpoint supplies fallback/resource inventory data, not proof that an active
   budget refilled. Search headers never replace REST core quota. Counts are
   last-observed values, not a live guarantee.
+- Different REST endpoints can report independent reset windows under `core`.
+  The display conservatively uses the lowest remaining active observation,
+  discarding expired windows rather than letting a fuller events budget hide
+  an almost exhausted repository budget. Late responses cannot increase the
+  observed remaining count within the same active window.
 - The menu bar labels both budgets: `R` is REST core requests remaining; `G` is
   GraphQL points remaining (not requests). REST is stacked above GraphQL without an extra icon to save space. Hover for exact counts and
   units; open GitHub API Status for reset times and separate search budgets.
@@ -139,7 +154,7 @@ Current behavior:
 - GraphQL HTTP-200 error envelopes are reported as GraphQL errors, never cached
   as successful data. Invalid legacy cache entries are bypassed on refresh.
 - `repobar cache clear --json` clears persisted REST responses, GraphQL
-  responses, and rate limits.
+  responses, quota observations, and rate limits.
 
 ## Discrawl-Compatible Snapshot
 
