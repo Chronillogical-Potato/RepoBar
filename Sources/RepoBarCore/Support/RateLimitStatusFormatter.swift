@@ -58,23 +58,10 @@ public enum RateLimitStatusFormatter {
             return "Blocked: \(self.compactBlockerSummary(blocker))"
         }
 
-        var rows: [String] = []
-        if let rest = diagnostics.restRateLimit {
-            rows.append(Self.snapshotText(label: "REST", snapshot: rest, now: now, compact: true))
-        }
-        if let graphQL = diagnostics.graphQLRateLimit {
-            rows.append(Self.snapshotText(label: "GraphQL", snapshot: graphQL, now: now, compact: true))
-        }
-        if rows.isEmpty, let cacheSummary {
-            rows = Self.observedRateLimitRows(from: cacheSummary)
-                .prefix(2)
-                .map { Self.cachedResponseText($0, now: now, compact: true) }
-        }
-        if rows.isEmpty, let active = cacheSummary?.rateLimits.first {
-            rows.append(Self.activeLimitText(active, now: now, compact: true))
-        }
-
-        return rows.isEmpty ? "No current blocker" : "OK: " + rows.joined(separator: " · ")
+        let juice = RateLimitJuice(diagnostics: diagnostics, cacheSummary: cacheSummary, now: now)
+        let rest = juice.compactRestText ?? "?"
+        let graphQL = juice.compactGraphQLText ?? "?"
+        return "REST \(rest) requests · GraphQL \(graphQL) points left"
     }
 
     public static func sections(
@@ -110,8 +97,10 @@ public enum RateLimitStatusFormatter {
 
         if let resources = diagnostics.rateLimitResources {
             sections.append(contentsOf: Self.liveResourceSections(from: resources, now: now))
-        } else if let rest = diagnostics.restRateLimit {
-            currentRows.append(Self.snapshotText(label: "REST", snapshot: rest, now: now))
+        } else {
+            if let rest = diagnostics.restRateLimit {
+                currentRows.append(Self.snapshotText(label: "REST", snapshot: rest, now: now))
+            }
             if let graphQL = diagnostics.graphQLRateLimit {
                 currentRows.append(Self.snapshotText(label: "GraphQL", snapshot: graphQL, now: now))
             }
@@ -231,10 +220,20 @@ public enum RateLimitStatusFormatter {
             rows.append(RateLimitDisplayRow(
                 text: "REST core blocked",
                 resource: "core",
-                quotaText: "0 left",
+                quotaText: diagnostics.restRateLimit?.remaining.map { "\($0) requests left" } ?? "blocked",
                 resetText: "resets \(RelativeFormatter.string(from: reset, relativeTo: now))",
                 detailText: errorDetail,
-                percentRemaining: 0
+                percentRemaining: diagnostics.restRateLimit?.remainingPercent
+            ))
+        }
+
+        if let reset = diagnostics.graphQLRateLimitReset, reset > now {
+            rows.append(RateLimitDisplayRow(
+                text: "GraphQL blocked",
+                resource: "graphql",
+                quotaText: diagnostics.graphQLRateLimit?.remaining.map { "\($0) points left" },
+                resetText: "retry \(RelativeFormatter.string(from: reset, relativeTo: now))",
+                percentRemaining: nil
             ))
         }
 
@@ -400,16 +399,6 @@ public enum RateLimitStatusFormatter {
             fetchedAt: snapshot.fetchedAt
         ), now: now, compact: compact)
         return "\(label): \(text)"
-    }
-
-    private static func cachedResponseText(_ row: RepoBarCachedResponseSummary, now: Date, compact: Bool = false) -> String {
-        self.rateLimitText(RateLimitTextInput(
-            resource: row.rateLimitResource,
-            remaining: row.rateLimitRemaining,
-            limit: row.rateLimitLimit,
-            reset: row.rateLimitReset,
-            fetchedAt: row.fetchedAt
-        ), now: now, compact: compact)
     }
 
     private static func cachedResponseRow(_ row: RepoBarCachedResponseSummary, now: Date) -> RateLimitDisplayRow {

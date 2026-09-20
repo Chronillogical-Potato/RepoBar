@@ -99,7 +99,7 @@ struct RateLimitJuiceTests {
         let state = RateLimitDisplayState(diagnostics: .empty, cacheSummary: summary)
 
         #expect(state.juice.compactRestText == "4.9K")
-        #expect(state.compactSummary(now: now).contains("4.9K/5K left"))
+        #expect(state.compactSummary(now: now).contains("4.9K requests"))
         #expect(state.sections(now: now).flatMap(\.rows).contains { $0.contains("4948/5000") })
     }
 
@@ -223,5 +223,44 @@ struct RateLimitJuiceTests {
         )
 
         #expect(RateLimitDisplayState(diagnostics: .empty, cacheSummary: summary).isLimited(now: now) == false)
+    }
+
+    @Test
+    func `newer headers win across all quota displays`() throws {
+        let now = Date()
+        let old = RateLimitSnapshot(resource: "core", limit: 5000, remaining: 5000, used: 0, reset: now.addingTimeInterval(3600), fetchedAt: now)
+        let rest = RateLimitSnapshot(resource: "core", limit: 5000, remaining: 4200, used: 800, reset: old.reset, fetchedAt: now.addingTimeInterval(10))
+        let graphQL = RateLimitSnapshot(resource: "graphql", limit: 5000, remaining: 2500, used: 2500, reset: old.reset, fetchedAt: now.addingTimeInterval(10))
+        let diagnostics = try DiagnosticsSummary(
+            apiHost: #require(URL(string: "https://api.github.com")), rateLimitReset: nil, lastRateLimitError: nil,
+            etagEntries: 0, backoffEntries: 0, restRateLimit: rest, graphQLRateLimit: graphQL,
+            rateLimitResources: RateLimitResourcesSnapshot(fetchedAt: now, resources: ["core": old, "graphql": old])
+        )
+        let state = RateLimitDisplayState(diagnostics: diagnostics)
+        #expect(state.juice.compactMenuBarText == "R 4.2K · G 2.5K")
+        #expect(state.compactSummary().contains("REST 4.2K requests · GraphQL 2.5K points"))
+        #expect(diagnostics.rateLimitResources?["core"]?.remaining == 4200)
+        #expect(diagnostics.rateLimitResources?["graphql"]?.remaining == 2500)
+        #expect(state.juice.menuBarTooltip.contains("4200/5000 requests"))
+        #expect(state.juice.menuBarTooltip.contains("2500/5000 points"))
+    }
+
+    @Test
+    func `graph QL only quota and secondary block are visible`() throws {
+        let now = Date()
+        let graphQL = RateLimitSnapshot(resource: "graphql", limit: 5000, remaining: 4000, used: 1000, reset: now.addingTimeInterval(3600), fetchedAt: now)
+        let diagnostics = try DiagnosticsSummary(
+            apiHost: #require(URL(string: "https://api.github.com")), rateLimitReset: nil, lastRateLimitError: nil,
+            etagEntries: 0, backoffEntries: 0, restRateLimit: nil, graphQLRateLimit: graphQL,
+            rateLimitResources: nil, graphQLRateLimitReset: now.addingTimeInterval(60)
+        )
+        let state = RateLimitDisplayState(diagnostics: diagnostics)
+        #expect(state.isLimited())
+        #expect(state.juice.hasData)
+        #expect(state.juice.isRestLimited == false)
+        #expect(state.juice.compactMenuBarText == "R ? · G !")
+        #expect(state.juice.menuBarTooltip.contains("4000/5000 points left (blocked)"))
+        #expect(state.compactSummary().contains("GraphQL blocked"))
+        #expect(state.sections().flatMap(\.rows).contains { $0.contains("GraphQL") })
     }
 }

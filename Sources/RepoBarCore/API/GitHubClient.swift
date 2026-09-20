@@ -387,11 +387,8 @@ public actor GitHubClient {
 
     public func diagnostics() async -> DiagnosticsSummary {
         let requestDiagnostics = await self.requestRunner.diagnosticsSnapshot()
-        let graphQLRateLimit: RateLimitSnapshot? = if let graphQL = requestDiagnostics.rateLimitResources?["graphql"] {
-            graphQL
-        } else {
-            await self.graphQL.rateLimitSnapshot()
-        }
+        let graphQLRateLimit = await self.graphQL.rateLimitSnapshot()
+        let graphQLRateLimitReset = await self.graphQL.rateLimitReset()
         return DiagnosticsSummary(
             apiHost: self.apiHost,
             rateLimitReset: requestDiagnostics.rateLimitReset,
@@ -401,7 +398,8 @@ public actor GitHubClient {
             endpointCooldowns: requestDiagnostics.endpointCooldowns,
             restRateLimit: requestDiagnostics.restRateLimit,
             graphQLRateLimit: graphQLRateLimit,
-            rateLimitResources: requestDiagnostics.rateLimitResources
+            rateLimitResources: requestDiagnostics.rateLimitResources,
+            graphQLRateLimitReset: graphQLRateLimitReset
         )
     }
 
@@ -632,6 +630,7 @@ public struct DiagnosticsSummary: Sendable {
     public let restRateLimit: RateLimitSnapshot?
     public let graphQLRateLimit: RateLimitSnapshot?
     public let rateLimitResources: RateLimitResourcesSnapshot?
+    public let graphQLRateLimitReset: Date?
 
     public init(
         apiHost: URL,
@@ -642,7 +641,8 @@ public struct DiagnosticsSummary: Sendable {
         endpointCooldowns: [EndpointCooldownSummary] = [],
         restRateLimit: RateLimitSnapshot?,
         graphQLRateLimit: RateLimitSnapshot?,
-        rateLimitResources: RateLimitResourcesSnapshot?
+        rateLimitResources: RateLimitResourcesSnapshot?,
+        graphQLRateLimitReset: Date? = nil
     ) {
         self.apiHost = apiHost
         self.rateLimitReset = rateLimitReset
@@ -650,9 +650,27 @@ public struct DiagnosticsSummary: Sendable {
         self.etagEntries = etagEntries
         self.backoffEntries = backoffEntries
         self.endpointCooldowns = endpointCooldowns
-        self.restRateLimit = restRateLimit
-        self.graphQLRateLimit = graphQLRateLimit
-        self.rateLimitResources = rateLimitResources
+        let coreHeader = restRateLimit.flatMap { $0.resource == nil || $0.resource == "core" ? $0 : nil }
+        let core = RateLimitSnapshot.newest(rateLimitResources?["core"] ?? rateLimitResources?["rate"], coreHeader)
+        let graphQL = RateLimitSnapshot.newest(rateLimitResources?["graphql"], graphQLRateLimit)
+        self.restRateLimit = core
+        self.graphQLRateLimit = graphQL
+        self.graphQLRateLimitReset = [
+            graphQLRateLimitReset,
+            graphQL.flatMap { $0.remaining == 0 ? $0.reset : nil }
+        ].compactMap(\.self).max()
+        if let rateLimitResources {
+            var resources = rateLimitResources.resources
+            if let core {
+                resources["core"] = core
+            }
+            if let graphQL {
+                resources["graphql"] = graphQL
+            }
+            self.rateLimitResources = RateLimitResourcesSnapshot(fetchedAt: rateLimitResources.fetchedAt, resources: resources)
+        } else {
+            self.rateLimitResources = nil
+        }
     }
 
     public static let empty = DiagnosticsSummary(

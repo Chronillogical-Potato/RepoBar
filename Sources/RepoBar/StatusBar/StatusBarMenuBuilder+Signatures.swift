@@ -35,6 +35,7 @@ struct RateLimitMenuSignature: Hashable {
     let graphQLRemaining: Int?
     let graphQLLimit: Int?
     let graphQLReset: Date?
+    let graphQLBlockedUntil: Date?
     let liveResources: [LiveRateLimitResourceSignature]
     let endpointCooldowns: [EndpointCooldownSignature]
     let cachedResponses: [CachedRateLimitSignature]
@@ -57,6 +58,7 @@ struct RateLimitMenuSignature: Hashable {
         self.graphQLRemaining = diagnostics.graphQLRateLimit?.remaining
         self.graphQLLimit = diagnostics.graphQLRateLimit?.limit
         self.graphQLReset = diagnostics.graphQLRateLimit?.reset
+        self.graphQLBlockedUntil = diagnostics.graphQLRateLimitReset
         self.liveResources = diagnostics.rateLimitResources?.resources
             .map { resource, snapshot in
                 LiveRateLimitResourceSignature(resource: resource, snapshot: snapshot)

@@ -55,6 +55,9 @@ public struct RateLimitDisplayState: Sendable {
         if self.diagnostics.rateLimitReset.map({ $0 > now }) ?? false {
             return true
         }
+        if self.diagnostics.graphQLRateLimitReset.map({ $0 > now }) ?? false {
+            return true
+        }
         if self.diagnostics.endpointCooldowns.contains(where: { $0.retryAfter > now }) {
             return true
         }

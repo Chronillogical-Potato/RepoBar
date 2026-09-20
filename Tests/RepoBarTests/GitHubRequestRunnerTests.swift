@@ -354,6 +354,41 @@ struct GitHubRequestRunnerTests {
         #expect(await transport.requests.count == 1)
     }
 
+    @Test
+    func `search quota does not replace or block core`() async throws {
+        let coreURL = try #require(URL(string: "https://api.github.com/user"))
+        let searchURL = try #require(URL(string: "https://api.github.com/search/repositories?q=swift"))
+        let reset = Int(Date().addingTimeInterval(60).timeIntervalSince1970)
+        let transport = StubHTTPTransport(responses: [
+            Self.response(url: coreURL, status: 200, headers: ["X-RateLimit-Resource": "core", "X-RateLimit-Remaining": "4900"], body: "{}"),
+            Self.response(url: searchURL, status: 403, headers: ["X-RateLimit-Resource": "search", "X-RateLimit-Remaining": "0", "X-RateLimit-Reset": "\(reset)"], body: "{}"),
+            Self.response(url: coreURL, status: 200, headers: ["X-RateLimit-Resource": "core", "X-RateLimit-Remaining": "4899"], body: "{}")
+        ])
+        let runner = GitHubRequestRunner(etagCache: ETagCache(), dataLoader: HTTPDataLoader { try await transport.data(for: $0) })
+        _ = try await runner.get(url: coreURL, token: "test-token")
+        do {
+            _ = try await runner.get(url: searchURL, token: "test-token")
+            Issue.record("Expected search rate limit")
+        } catch GitHubAPIError.rateLimited {}
+        let diagnostics = await runner.diagnosticsSnapshot()
+        #expect(diagnostics.restRateLimit?.remaining == 4900)
+        #expect(diagnostics.rateLimitReset == nil)
+        _ = try await runner.get(url: coreURL, token: "test-token")
+        #expect(await runner.diagnosticsSnapshot().restRateLimit?.remaining == 4899)
+    }
+
+    @Test
+    func `rate limit endpoint remains available when core is exhausted`() async throws {
+        let url = try #require(URL(string: "https://api.github.com/rate_limit"))
+        let cache = ETagCache()
+        await cache.setRateLimitReset(date: Date().addingTimeInterval(300))
+        let transport = StubHTTPTransport(responses: [Self.response(url: url, status: 200, body: "{}")])
+        let runner = GitHubRequestRunner(etagCache: cache, dataLoader: HTTPDataLoader { try await transport.data(for: $0) })
+        _ = try await runner.get(url: url, token: "test-token", useETag: false)
+        #expect(await transport.requests.count == 1)
+        #expect(await transport.requests.first?.cachePolicy == .reloadIgnoringLocalCacheData)
+    }
+
     private static func response(
         url: URL,
         status: Int,

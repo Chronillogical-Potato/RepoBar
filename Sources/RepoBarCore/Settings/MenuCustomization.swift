@@ -48,7 +48,7 @@ public enum MainMenuItemID: String, CaseIterable, Codable, Hashable, Sendable {
         case .signInAction: "GitHub sign-in action"
         case .contributionHeader: "Heatmap header + submenu"
         case .statusBanner: "Rate-limit or error banner"
-        case .rateLimits: "Current blocker and rate-limit diagnostics"
+        case .rateLimits: "REST requests, GraphQL points, and current blockers"
         case .actionsLimits: "Runner status, queue depth, and usage"
         case .filters: "Pinned/hidden filter chips"
         case .repoList: "Repo cards + inline heatmap"

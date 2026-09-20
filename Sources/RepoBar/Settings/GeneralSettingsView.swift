@@ -52,9 +52,12 @@ struct GeneralSettingsView: View {
                 Section {
                     Toggle("Show contribution header", isOn: self.setting(\.appearance.showContributionHeader))
                     Toggle(
-                        "Show GitHub rate-limit meter in menu bar",
+                        "Show REST and GraphQL quotas in menu bar",
                         isOn: self.setting(\.appearance.showRateLimitMeterInMenuBar, effects: .menuDiagnostics)
                     )
+                    Text("Top row: R = REST core requests left. Bottom row: G = GraphQL points left. These are separate budgets.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                     Picker("Activity feed", selection: self.setting(\.appearance.activityScope, effects: .refresh)) {
                         ForEach(GlobalActivityScope.allCases, id: \.self) { scope in
                             Text(scope.label).tag(scope)

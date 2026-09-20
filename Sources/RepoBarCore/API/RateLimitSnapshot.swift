@@ -35,6 +35,13 @@ public struct RateLimitSnapshot: Sendable {
         )
     }
 
+    static func newest(_ first: RateLimitSnapshot?, _ second: RateLimitSnapshot?) -> RateLimitSnapshot? {
+        guard let first else { return second }
+        guard let second, second.fetchedAt > first.fetchedAt else { return first }
+
+        return second
+    }
+
     public var remainingPercent: Double? {
         RateLimitJuice.percent(remaining: self.remaining, limit: self.limit)
     }

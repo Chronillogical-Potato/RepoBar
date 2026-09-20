@@ -220,23 +220,24 @@ final class StatusBarMenuManager: NSObject, NSMenuDelegate {
             cacheSummary: self.appState.session.rateLimitCacheSummary
         )
         guard self.appState.session.settings.appearance.showRateLimitMeterInMenuBar,
-              juice.hasData,
-              let text = juice.compactRestText
+              juice.hasData
         else {
             self.setButtonImage(self.fallbackStatusImage(), for: button)
             self.setButtonTitle(nil, for: button)
             button.toolTip = "RepoBar"
+            button.setAccessibilityLabel("RepoBar")
             button.imageScaling = .scaleProportionallyDown
             return
         }
 
         let image = RateLimitStatusIconRenderer.makeIcon(
-            restPercent: juice.displayRestPercent,
-            graphQLPercent: juice.displayGraphQLPercent
+            restText: juice.compactRestText ?? "?",
+            graphQLText: juice.compactGraphQLText ?? "?"
         )
         self.setButtonImage(image, for: button)
-        self.setButtonTitle(text, for: button)
-        button.toolTip = self.rateLimitTooltip(juice: juice)
+        self.setButtonTitle(nil, for: button)
+        button.toolTip = juice.menuBarTooltip
+        button.setAccessibilityLabel(juice.menuBarTooltip)
         button.font = .monospacedDigitSystemFont(ofSize: 11, weight: .semibold)
         button.imageScaling = .scaleNone
     }
@@ -631,22 +632,6 @@ private extension StatusBarMenuManager {
         if button.imagePosition != position {
             button.imagePosition = position
         }
-    }
-
-    func rateLimitTooltip(juice: RateLimitJuice) -> String {
-        let rest = self.rateLimitTooltipPart(label: "REST", remaining: juice.restRemaining, limit: juice.restLimit)
-        let graphQL = self.rateLimitTooltipPart(label: "GraphQL", remaining: juice.graphQLRemaining, limit: juice.graphQLLimit)
-        return "RepoBar GitHub rate limits: \(rest), \(graphQL)"
-    }
-
-    func rateLimitTooltipPart(label: String, remaining: Int?, limit: Int?) -> String {
-        if let remaining, let limit {
-            return "\(label) \(remaining)/\(limit)"
-        }
-        if let remaining {
-            return "\(label) \(remaining) left"
-        }
-        return "\(label) unknown"
     }
 }
 

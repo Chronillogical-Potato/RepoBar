@@ -167,7 +167,7 @@
 "GitHub sign-in action" = "GitHub’a giriş eylemi";
 "Heatmap header + submenu" = "Isı haritası başlığı ve alt menüsü";
 "Rate-limit or error banner" = "Hız sınırı veya hata başlığı";
-"Current blocker and rate-limit diagnostics" = "Mevcut engel ve hız sınırı tanılaması";
+"REST requests, GraphQL points, and current blockers" = "REST istekleri, GraphQL puanları ve mevcut engeller";
 "Runner status, queue depth, and usage" = "Çalıştırıcı durumu, kuyruk uzunluğu ve kullanım";
 "Pinned/hidden filter chips" = "Sabitlenmiş/gizli depo filtreleri";
 "Repo cards + inline heatmap" = "Depo kartları ve satır içi ısı haritası";

@@ -126,7 +126,15 @@ Current behavior:
   RepoBar, PAT, or OAuth requests are blocked. It still spends the normal user
   core budget first, which makes failures order-dependent across tools.
 - The menu bar rate-limit meter, compact status row, submenu, and API settings
-  tab share one refreshed display snapshot.
+  tab share one refreshed display snapshot. The newest sample per resource wins,
+  whether it came from `/rate_limit` or a response header; search headers never
+  replace REST core quota. Counts are last-observed values, not a live guarantee.
+- The menu bar labels both budgets: `R` is REST core requests remaining; `G` is
+  GraphQL points remaining (not requests). REST is stacked above GraphQL without an extra icon to save space. Hover for exact counts and
+  units; open GitHub API Status for reset times and separate search budgets.
+  `?` means unknown; `!` means an API is paused despite remaining primary quota.
+- GraphQL HTTP-200 error envelopes are reported as GraphQL errors, never cached
+  as successful data. Invalid legacy cache entries are bypassed on refresh.
 - `repobar cache clear --json` clears persisted REST responses, GraphQL
   responses, and rate limits.
 

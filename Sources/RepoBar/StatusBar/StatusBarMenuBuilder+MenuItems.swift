@@ -133,6 +133,7 @@ extension StatusBarMenuBuilder {
 
         let hasActiveEndpointCooldown = state.diagnostics.endpointCooldowns.contains { $0.retryAfter > now }
         let hasActiveQuotaBlocker = state.diagnostics.rateLimitReset.map { $0 > now } ?? false
+            || (state.diagnostics.graphQLRateLimitReset.map { $0 > now } ?? false)
             || (state.cacheSummary?.rateLimits.contains { $0.resetAt > now } ?? false)
         let sections = state.sections(now: now).filter {
             if $0.title == "Current Status" || $0.title == "Budget Model" {

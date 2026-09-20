@@ -33,8 +33,8 @@ struct RateLimitStatusFormatterTests {
             now: now
         )
 
-        #expect(text.contains("core"))
-        #expect(text.contains("4.9K left"))
+        #expect(text.contains("REST"))
+        #expect(text.contains("4.9K requests"))
     }
 
     @Test
@@ -351,7 +351,7 @@ struct RateLimitStatusFormatterTests {
         #expect(summary.contains("Blocked: REST core blocked"))
         #expect(summary.contains("Shared GitHub user budget") == false)
         #expect(sections.map(\.title) == ["Current Blocker", "REST Core", "GraphQL"])
-        #expect(sections[0].resourceRows.first?.quotaText == "0 left")
+        #expect(sections[0].resourceRows.first?.quotaText == "2692 requests left")
         #expect(sections[0].resourceRows.first?.resetText == "resets in 2 min.")
         #expect(sections[1].resourceRows.first?.quotaText == "2692/5000")
         #expect(sections[2].resourceRows.first?.quotaText == "4532/5000")

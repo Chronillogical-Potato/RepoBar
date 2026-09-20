@@ -1,6 +1,12 @@
 # Changelog
 
-## Unreleased
+## 0.9.2 - 2026-09-19
+
+**Highlights:** Compact stacked API quotas and clearer, more reliable GitHub status.
+
+- Stack labeled REST and GraphQL quotas in the menu bar, with exact request and point counts on hover.
+- Preserve GitHub GraphQL error messages, avoid caching failed responses, and recover from invalid cached data instead of showing a misleading missing-data error.
+- Prefer the newest quota sample, keep search limits separate from REST core, and show GraphQL throttling without confusing remaining quota with temporary pauses.
 
 - Send CLI errors to stderr so failed commands do not mix diagnostics into stdout or JSON pipelines.
 - Preserve worktree paths containing whitespace, Unicode, or `worktree ` and nested branch names when listing local worktrees and loading their metadata.

@@ -165,7 +165,7 @@
 "GitHub sign-in action" = "GitHub sign-in action";
 "Heatmap header + submenu" = "Heatmap header + submenu";
 "Rate-limit or error banner" = "Rate-limit or error banner";
-"Current blocker and rate-limit diagnostics" = "Current blocker and rate-limit diagnostics";
+"REST requests, GraphQL points, and current blockers" = "REST requests, GraphQL points, and current blockers";
 "Runner status, queue depth, and usage" = "Runner status, queue depth, and usage";
 "Pinned/hidden filter chips" = "Pinned/hidden filter chips";
 "Repo cards + inline heatmap" = "Repo cards + inline heatmap";

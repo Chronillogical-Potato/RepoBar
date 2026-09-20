@@ -29,7 +29,9 @@ public struct RateLimitJuice: Equatable, Sendable {
         self.graphQLPercent = Self.percent(remaining: self.graphQLRemaining, limit: self.graphQLLimit)
         self.isRestLimited = diagnostics.rateLimitReset.map { $0 > now } ?? false
             || activeLimits.contains { $0.resource == "core" }
-        self.isGraphQLLimited = activeLimits.contains { $0.resource == "graphql" }
+        self.isGraphQLLimited = diagnostics.graphQLRateLimitReset.map { $0 > now } ?? false
+            || activeLimits.contains { $0.resource == "graphql" }
+            || ((resourceGraphQL ?? diagnostics.graphQLRateLimit).map { $0.remaining == 0 && ($0.reset.map { $0 > now } ?? false) } ?? false)
     }
 
     public var hasData: Bool {
@@ -46,7 +48,7 @@ public struct RateLimitJuice: Equatable, Sendable {
 
     public var compactRestText: String? {
         if self.isRestLimited {
-            return "0"
+            return (self.restRemaining ?? 0) > 0 ? "!" : "0"
         }
         if let restRemaining {
             return Self.shortCount(restRemaining)
@@ -57,8 +59,40 @@ public struct RateLimitJuice: Equatable, Sendable {
         return nil
     }
 
+    public var compactGraphQLText: String? {
+        if self.isGraphQLLimited {
+            return self.graphQLRemaining == 0 ? "0" : "!"
+        }
+        return self.graphQLRemaining.map(Self.shortCount)
+    }
+
+    public var compactMenuBarText: String {
+        let rest = self.compactRestText ?? "?"
+        let graphQL = self.compactGraphQLText ?? "?"
+        return "R \(rest) · G \(graphQL)"
+    }
+
+    public var menuBarTooltip: String {
+        let rest = Self.quotaText(remaining: self.restRemaining, limit: self.restLimit, unit: "requests")
+        let graphQL = Self.quotaText(remaining: self.graphQLRemaining, limit: self.graphQLLimit, unit: "points")
+        return [
+            "RepoBar GitHub API quota (last observed)",
+            "R — REST core: \(rest)\(self.isRestLimited ? " (blocked)" : "")",
+            "G — GraphQL: \(graphQL)\(self.isGraphQLLimited ? " (blocked)" : "")",
+            "Top row: REST · Bottom row: GraphQL",
+            "Separate budgets; search limits are in GitHub API Status."
+        ].joined(separator: "\n")
+    }
+
+    private static func quotaText(remaining: Int?, limit: Int?, unit: String) -> String {
+        guard let remaining else { return "unknown" }
+
+        let total = limit.map { "/\($0)" } ?? ""
+        return "\(remaining)\(total) \(unit) left"
+    }
+
     private static func cachedInfo(resource: String, in summary: RepoBarCacheSummary) -> CachedRateLimitInfo? {
-        guard let row = summary.latestResponses.first(where: { $0.rateLimitResource == resource }) else { return nil }
+        guard let row = summary.latestResponses.filter({ $0.rateLimitResource == resource }).max(by: { $0.fetchedAt < $1.fetchedAt }) else { return nil }
 
         return CachedRateLimitInfo(remaining: row.rateLimitRemaining, limit: row.rateLimitLimit)
     }
