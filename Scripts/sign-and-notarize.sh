@@ -61,8 +61,8 @@ xcrun stapler staple "$APP_BUNDLE"
 
 "$DITTO_BIN" -c -k --keepParent --sequesterRsrc "$APP_BUNDLE" "$ZIP_NAME"
 
-spctl -a -t exec -vv "$APP_BUNDLE"
-stapler validate "$APP_BUNDLE"
+/usr/sbin/spctl -a -t exec -vv "$APP_BUNDLE"
+xcrun stapler validate "$APP_BUNDLE"
 
 echo "Packaging dSYM"
 DSYM_PATH=".build/apple/Products/Release/RepoBar.dSYM"
