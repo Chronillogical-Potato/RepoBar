@@ -3,6 +3,24 @@
     <channel>
         <title>RepoBar</title>
         <item>
+            <title>0.9.3</title>
+            <pubDate>Sun, 20 Sep 2026 01:05:33 -0700</pubDate>
+            <link>https://raw.githubusercontent.com/steipete/RepoBar/main/appcast.xml</link>
+            <sparkle:version>33</sparkle:version>
+            <sparkle:shortVersionString>0.9.3</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<h2>RepoBar 0.9.3</h2>
+<ul>
+<li>Keep actual REST and GraphQL usage visible when GitHub&#x27;s quota endpoint incorrectly reports completely unused budgets; preserve response-header counts and reset times until their known window expires.</li>
+<li>Retain observed GraphQL quota across app restarts and cached-only refreshes without making additional API requests.</li>
+<li>Refresh one cached GraphQL query when no current quota observation exists, including the first upgrade from older caches, instead of trusting a synthetic full budget.</li>
+<li>Keep the lowest observed remaining REST quota across active windows when repository and user-events responses report different budgets under the same core resource.</li>
+</ul>
+<p><a href="https://github.com/steipete/RepoBar/blob/main/CHANGELOG.md">View full changelog</a></p>
+]]></description>
+            <enclosure url="https://github.com/steipete/RepoBar/releases/download/v0.9.3/RepoBar-0.9.3.zip" length="26731503" type="application/octet-stream" sparkle:edSignature="cXZlgXBSrF2kjaErsx/a0o94tSpRpcyd5CIr2Xk7/TNs2zpOAqEPdzljx0Shq+dRSLxgtWZTPrIFWZYlFQEKCg=="/>
+        </item>
+        <item>
             <title>0.9.2</title>
             <pubDate>Sat, 19 Sep 2026 20:27:40 -0700</pubDate>
             <link>https://raw.githubusercontent.com/steipete/RepoBar/main/appcast.xml</link>
@@ -46,22 +64,6 @@
 <p><a href="https://github.com/steipete/RepoBar/blob/main/CHANGELOG.md">View full changelog</a></p>
 ]]></description>
             <enclosure url="https://github.com/steipete/RepoBar/releases/download/v0.9.1/RepoBar-0.9.1.zip" length="26605543" type="application/octet-stream" sparkle:edSignature="Zm9QGNQGhpFg+5ixqAAl577dPFAnyrVeGq7KOhGa/JltKnhTM/OumBDQqhnYD0LzU+YiJgNgU/QQd76ihqoeCQ=="/>
-        </item>
-        <item>
-            <title>0.9.0</title>
-            <pubDate>Mon, 07 Sep 2026 01:59:10 -0700</pubDate>
-            <link>https://raw.githubusercontent.com/steipete/RepoBar/main/appcast.xml</link>
-            <sparkle:version>30</sparkle:version>
-            <sparkle:shortVersionString>0.9.0</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-            <description><![CDATA[<h2>RepoBar 0.9.0</h2>
-<p><strong>Highlights:</strong> RepoBar now follows your macOS language preference with Turkish menus and common Settings controls.</p>
-<ul>
-<li>Add Turkish translations for macOS menu actions, Settings tabs, repository visibility controls, and Display customization, with English fallback and unchanged CLI output (thanks @husodrn46). (#114)</li>
-</ul>
-<p><a href="https://github.com/steipete/RepoBar/blob/main/CHANGELOG.md">View full changelog</a></p>
-]]></description>
-            <enclosure url="https://github.com/steipete/RepoBar/releases/download/v0.9.0/RepoBar-0.9.0.zip" length="26709862" type="application/octet-stream" sparkle:edSignature="PjqaT/0fuFCkG7TszV7CIusnAqCnF8GaumQbYAd+LrUMixorzcb0ljdPX8nV8m7ovgBeoF6ytyKatC6hdcxRBw=="/>
         </item>
         <item>
             <title>0.8.7</title>
