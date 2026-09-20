@@ -1,5 +1,7 @@
 # Changelog
 
+## Unreleased
+
 ## 0.9.2 - 2026-09-19
 
 **Highlights:** Compact stacked API quotas and clearer, more reliable GitHub status.
