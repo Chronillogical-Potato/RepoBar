@@ -651,8 +651,8 @@ public struct DiagnosticsSummary: Sendable {
         self.backoffEntries = backoffEntries
         self.endpointCooldowns = endpointCooldowns
         let coreHeader = restRateLimit.flatMap { $0.resource == nil || $0.resource == "core" ? $0 : nil }
-        let core = RateLimitSnapshot.newest(rateLimitResources?["core"] ?? rateLimitResources?["rate"], coreHeader)
-        let graphQL = RateLimitSnapshot.newest(rateLimitResources?["graphql"], graphQLRateLimit)
+        let core = RateLimitSnapshot.preferred(reported: rateLimitResources?["core"] ?? rateLimitResources?["rate"], response: coreHeader)
+        let graphQL = RateLimitSnapshot.preferred(reported: rateLimitResources?["graphql"], response: graphQLRateLimit)
         self.restRateLimit = core
         self.graphQLRateLimit = graphQL
         self.graphQLRateLimitReset = [

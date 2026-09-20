@@ -8,7 +8,7 @@ actor GitHubRequestRunner {
     private let logger = RepoBarLogging.logger("github-rest")
     private var lastRateLimitReset: Date?
     private var lastRateLimitError: String?
-    private var latestRestRateLimit: RateLimitSnapshot?
+    private var responseRateLimits: [String: RateLimitSnapshot] = [:]
     private var latestRateLimitResources: RateLimitResourcesSnapshot?
     private let coreLimiter = AsyncPermitPool(limit: 6)
     private let searchLimiter = AsyncPermitPool(limit: 1)
@@ -162,7 +162,11 @@ actor GitHubRequestRunner {
             let (data, responseAny) = try await self.dataLoader.data(for: request)
             guard let response = responseAny as? HTTPURLResponse else { throw URLError(.badServerResponse) }
 
-            self.recordRateLimit(response: response)
+            // /rate_limit's own headers can carry the same synthetic full
+            // budget as its body; do not mistake them for real request usage.
+            if url.lastPathComponent != "rate_limit" {
+                self.recordRateLimit(response: response)
+            }
             var retryAt = GitHubRateLimitPolicy.retryDate(response: response, data: data)
             let budget = [retryAt, GitHubRateLimitPolicy.primaryResetDate(response: response)].compactMap(\.self).max()
             if let reset = budget, let resource = response.value(forHTTPHeaderField: "X-RateLimit-Resource"), resource != "core" {
@@ -232,7 +236,7 @@ actor GitHubRequestRunner {
         await self.backoff.clear()
         self.lastRateLimitReset = nil
         self.lastRateLimitError = nil
-        self.latestRestRateLimit = nil
+        self.responseRateLimits = [:]
         self.latestRateLimitResources = nil
     }
 
@@ -241,9 +245,10 @@ actor GitHubRequestRunner {
         for (resource, previous) in self.latestRateLimitResources?.resources ?? [:] {
             resources[resource] = RateLimitSnapshot.newest(resources[resource], previous)
         }
-        if let core = RateLimitSnapshot.newest(resources["core"] ?? resources["rate"], self.latestRestRateLimit) {
-            resources["core"] = core
-            self.latestRestRateLimit = core
+        for (resource, response) in self.responseRateLimits {
+            resources[resource] = RateLimitSnapshot.preferred(reported: resources[resource], response: response)
+        }
+        if let core = resources["core"] ?? resources["rate"] {
             self.detectRateLimit(from: core)
         }
         self.latestRateLimitResources = RateLimitResourcesSnapshot(fetchedAt: snapshot.fetchedAt, resources: resources)
@@ -275,7 +280,7 @@ actor GitHubRequestRunner {
             etagEntries: etagCount,
             backoffEntries: activeCooldowns.count,
             endpointCooldowns: endpointCooldowns,
-            restRateLimit: self.latestRestRateLimit,
+            restRateLimit: self.responseRateLimits["core"],
             rateLimitResources: self.latestRateLimitResources
         )
     }
@@ -284,12 +289,10 @@ actor GitHubRequestRunner {
         let snapshot = RateLimitSnapshot.from(response: response)
         if let snapshot {
             let resource = snapshot.resource ?? "core"
-            if resource == "core" {
-                self.latestRestRateLimit = RateLimitSnapshot.newest(self.latestRestRateLimit, snapshot)
-            }
+            self.responseRateLimits[resource] = RateLimitSnapshot.newest(self.responseRateLimits[resource], snapshot)
             if let current = self.latestRateLimitResources {
                 var resources = current.resources
-                resources[resource] = RateLimitSnapshot.newest(resources[resource], snapshot)
+                resources[resource] = RateLimitSnapshot.preferred(reported: resources[resource], response: self.responseRateLimits[resource])
                 self.latestRateLimitResources = RateLimitResourcesSnapshot(fetchedAt: current.fetchedAt, resources: resources)
             }
         }

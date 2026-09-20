@@ -126,9 +126,12 @@ Current behavior:
   RepoBar, PAT, or OAuth requests are blocked. It still spends the normal user
   core budget first, which makes failures order-dependent across tools.
 - The menu bar rate-limit meter, compact status row, submenu, and API settings
-  tab share one refreshed display snapshot. The newest sample per resource wins,
-  whether it came from `/rate_limit` or a response header; search headers never
-  replace REST core quota. Counts are last-observed values, not a live guarantee.
+  tab share one refreshed display snapshot. Headers from actual API responses
+  take precedence within their known reset window: `/rate_limit` can incorrectly
+  report unused, rolling windows despite real usage, including in its own headers.
+  That endpoint supplies fallback/resource inventory data, not proof that an active
+  budget refilled. Search headers never replace REST core quota. Counts are
+  last-observed values, not a live guarantee.
 - The menu bar labels both budgets: `R` is REST core requests remaining; `G` is
   GraphQL points remaining (not requests). REST is stacked above GraphQL without an extra icon to save space. Hover for exact counts and
   units; open GitHub API Status for reset times and separate search budgets.

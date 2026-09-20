@@ -155,7 +155,7 @@ struct RateLimitJuiceTests {
     }
 
     @Test
-    func `uses rate limit endpoint resources before response headers`() throws {
+    func `uses response headers before rate limit endpoint within the same window`() throws {
         let now = Date(timeIntervalSinceReferenceDate: 350)
         let diagnostics = try DiagnosticsSummary(
             apiHost: #require(URL(string: "https://api.github.com")),
@@ -197,9 +197,9 @@ struct RateLimitJuiceTests {
 
         let juice = RateLimitJuice(diagnostics: diagnostics, now: now)
 
-        #expect(juice.restPercent == 80)
+        #expect(juice.restPercent == 2)
         #expect(juice.graphQLPercent == 50)
-        #expect(juice.compactRestText == "4K")
+        #expect(juice.compactRestText == "100")
     }
 
     @Test
@@ -223,6 +223,58 @@ struct RateLimitJuiceTests {
         )
 
         #expect(RateLimitDisplayState(diagnostics: .empty, cacheSummary: summary).isLimited(now: now) == false)
+    }
+
+    @Test
+    func `newer synthetic full budgets cannot hide REST or GraphQL usage`() throws {
+        let now = Date()
+        let observed = now.addingTimeInterval(-30)
+        let realReset = now.addingTimeInterval(600)
+        let summaryReset = now.addingTimeInterval(3600)
+        let rest = RateLimitSnapshot(resource: "core", limit: 5000, remaining: 2120, used: 2880, reset: realReset, fetchedAt: observed)
+        let graph = RateLimitSnapshot(resource: "graphql", limit: 5000, remaining: 842, used: 4158, reset: realReset, fetchedAt: observed)
+        let reported = RateLimitResourcesSnapshot(fetchedAt: now, resources: [
+            "core": RateLimitSnapshot(resource: "core", limit: 5000, remaining: 5000, used: 0, reset: summaryReset, fetchedAt: now),
+            "graphql": RateLimitSnapshot(resource: "graphql", limit: 5000, remaining: 5000, used: 0, reset: summaryReset, fetchedAt: now)
+        ])
+        let diagnostics = try DiagnosticsSummary(
+            apiHost: #require(URL(string: "https://api.github.com")), rateLimitReset: nil, lastRateLimitError: nil,
+            etagEntries: 0, backoffEntries: 0, restRateLimit: rest, graphQLRateLimit: graph, rateLimitResources: reported
+        )
+        let state = RateLimitDisplayState(diagnostics: diagnostics)
+        #expect(state.juice.compactRestText == "2.1K")
+        #expect(state.juice.compactGraphQLText == "842")
+        #expect(state.juice.menuBarTooltip.contains("2120/5000"))
+        #expect(state.juice.menuBarTooltip.contains("842/5000"))
+        let rows = state.sections(now: now).flatMap(\.rows)
+        #expect(rows.contains { $0.contains("2120/5000") })
+        #expect(rows.contains { $0.contains("842/5000") })
+        #expect(diagnostics.restRateLimit?.reset == realReset)
+        #expect(diagnostics.graphQLRateLimit?.reset == realReset)
+    }
+
+    @Test(arguments: [false, true])
+    func `summary can replace response after its known window expires`(expired: Bool) {
+        let now = Date()
+        let response = RateLimitSnapshot(
+            resource: "core",
+            limit: 5000,
+            remaining: 0,
+            used: 5000,
+            reset: now.addingTimeInterval(expired ? -1 : 1),
+            fetchedAt: now.addingTimeInterval(-30)
+        )
+        let reported = RateLimitSnapshot(
+            resource: "core",
+            limit: 5000,
+            remaining: 5000,
+            used: 0,
+            reset: now.addingTimeInterval(3600),
+            fetchedAt: now
+        )
+        #expect(RateLimitSnapshot.preferred(reported: reported, response: response)?.remaining == (expired ? 5000 : 0))
+        #expect(RateLimitSnapshot.preferred(reported: reported, response: nil)?.remaining == 5000)
+        #expect(RateLimitSnapshot.preferred(reported: nil, response: response)?.remaining == 0)
     }
 
     @Test

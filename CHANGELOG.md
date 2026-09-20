@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Keep actual REST and GraphQL usage visible when GitHub's quota endpoint incorrectly reports completely unused budgets; preserve response-header counts and reset times until their known window expires.
+
 ## 0.9.2 - 2026-09-19
 
 **Highlights:** Compact stacked API quotas and clearer, more reliable GitHub status.

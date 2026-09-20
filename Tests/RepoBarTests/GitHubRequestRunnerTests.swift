@@ -389,6 +389,41 @@ struct GitHubRequestRunnerTests {
         #expect(await transport.requests.first?.cachePolicy == .reloadIgnoringLocalCacheData)
     }
 
+    @Test
+    func `quota endpoint headers and body cannot overwrite real usage`() async throws {
+        let userURL = try #require(URL(string: "https://api.github.com/user"))
+        let quotaURL = try #require(URL(string: "https://api.github.com/rate_limit"))
+        let now = Date()
+        let reset = now.addingTimeInterval(600)
+        let transport = StubHTTPTransport(responses: [
+            Self.response(url: userURL, status: 200, headers: [
+                "X-RateLimit-Resource": "core", "X-RateLimit-Limit": "5000",
+                "X-RateLimit-Remaining": "2120", "X-RateLimit-Used": "2880",
+                "X-RateLimit-Reset": "\(Int(reset.timeIntervalSince1970))"
+            ], body: "{}"),
+            Self.response(url: quotaURL, status: 200, headers: [
+                "X-RateLimit-Resource": "core", "X-RateLimit-Limit": "5000",
+                "X-RateLimit-Remaining": "5000", "X-RateLimit-Used": "0",
+                "X-RateLimit-Reset": "\(Int(now.addingTimeInterval(3600).timeIntervalSince1970))"
+            ], body: "{}")
+        ])
+        let runner = GitHubRequestRunner(etagCache: ETagCache(), dataLoader: HTTPDataLoader { try await transport.data(for: $0) })
+        _ = try await runner.get(url: userURL, token: "test-token")
+        let original = await runner.diagnosticsSnapshot().restRateLimit
+        _ = try await runner.get(url: quotaURL, token: "test-token", useETag: false)
+        for offset in [10.0, 20.0] {
+            let sampled = now.addingTimeInterval(offset)
+            await runner.recordRateLimitResources(RateLimitResourcesSnapshot(fetchedAt: sampled, resources: [
+                "core": RateLimitSnapshot(resource: "core", limit: 5000, remaining: 5000, used: 0, reset: sampled.addingTimeInterval(3600), fetchedAt: sampled)
+            ]))
+            let diagnostics = await runner.diagnosticsSnapshot()
+            #expect(diagnostics.restRateLimit?.remaining == 2120)
+            #expect(diagnostics.restRateLimit?.fetchedAt == original?.fetchedAt)
+            #expect(diagnostics.rateLimitResources?["core"]?.remaining == 2120)
+            #expect(diagnostics.rateLimitResources?["core"]?.reset == original?.reset)
+        }
+    }
+
     private static func response(
         url: URL,
         status: Int,

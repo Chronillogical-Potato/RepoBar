@@ -42,6 +42,22 @@ public struct RateLimitSnapshot: Sendable {
         return second
     }
 
+    /// GitHub's /rate_limit endpoint can report an unused, rolling window even
+    /// while ordinary response headers show real usage. Keep that direct
+    /// evidence until its window expires; a newer summary is not proof of a reset.
+    static func preferred(reported: RateLimitSnapshot?, response: RateLimitSnapshot?) -> RateLimitSnapshot? {
+        guard let response else { return reported }
+        guard let reported else { return response }
+
+        if response.fetchedAt >= reported.fetchedAt {
+            return response
+        }
+        if let reset = response.reset, reset <= reported.fetchedAt {
+            return reported
+        }
+        return response
+    }
+
     public var remainingPercent: Double? {
         RateLimitJuice.percent(remaining: self.remaining, limit: self.limit)
     }
