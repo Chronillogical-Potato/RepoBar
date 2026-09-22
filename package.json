@@ -23,7 +23,7 @@
     "codegen": "./Scripts/apollo_codegen.sh",
     "ghql": "pnpm exec tsx Scripts/ghql.ts",
     "ghrest": "pnpm exec tsx Scripts/ghrest.ts",
-    "test:tooling": "node --import tsx --test Scripts/github-cli.test.ts"
+    "test:tooling": "node --import tsx --test Scripts/github-cli.test.ts Scripts/package-app.test.mjs"
   },
   "dependencies": {
     "graphql": "^17.0.2"

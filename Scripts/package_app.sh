@@ -4,7 +4,6 @@ CONFIGURATION=${1:-debug}
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 APP_NAME="RepoBar"
 BUNDLE_IDENTIFIER="${REPOBAR_BUNDLE_IDENTIFIER:-com.steipete.repobar}"
-ARCH_ARGS=()
 
 # Load version info
 source "$ROOT_DIR/version.env"
@@ -19,8 +18,9 @@ else
   if [ "${CONFIGURATION}" = "release" ]; then
     ARCH_ARGS=(--arch arm64 --arch x86_64)
   fi
-  swift build -c "${CONFIGURATION}" "${ARCH_ARGS[@]}"
-  swift build -c "${CONFIGURATION}" "${ARCH_ARGS[@]}" --product repobarcli
+  # Bash 3.2 treats empty arrays as unbound under set -u.
+  swift build -c "${CONFIGURATION}" ${ARCH_ARGS[@]+"${ARCH_ARGS[@]}"}
+  swift build -c "${CONFIGURATION}" ${ARCH_ARGS[@]+"${ARCH_ARGS[@]}"} --product repobarcli
 fi
 
 BUILD_DIR="${ROOT_DIR}/.build/${CONFIGURATION}"
