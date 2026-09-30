@@ -105,6 +105,47 @@ struct MenuSignatureTests {
     }
 
     @Test
+    func `repo submenu signature changes with heatmap color`() {
+        let now = Date(timeIntervalSinceReferenceDate: 1_500_000)
+        let range = HeatmapRange(start: now.addingTimeInterval(-86400), end: now)
+        let repo = Repository(
+            id: "1",
+            name: "Repo",
+            owner: "me",
+            sortOrder: 0,
+            error: nil,
+            rateLimitedUntil: nil,
+            ciStatus: .unknown,
+            openIssues: 0,
+            openPulls: 0,
+            latestRelease: nil,
+            latestActivity: nil,
+            activityEvents: [],
+            traffic: nil,
+            heatmap: []
+        )
+        let display = RepositoryDisplayModel(repo: repo, now: now)
+        func signature(_ settings: UserSettings) -> RepoSubmenuSignature {
+            RepoSubmenuSignature(
+                repo: display,
+                settings: settings,
+                heatmapRange: range,
+                recentCounts: RepoRecentCountSignature(commits: nil, commitsDigest: nil),
+                changelogPresentation: nil,
+                changelogHeadline: nil,
+                isPinned: false
+            )
+        }
+        var settings = UserSettings()
+        settings.heatmap.display = .submenu
+        settings.appearance.accentTone = .githubGreen
+        let green = signature(settings)
+        settings.appearance.accentTone = .system
+
+        #expect(green != signature(settings))
+    }
+
+    @Test
     func `menu build signature changes with pinned repos`() {
         let now = Date(timeIntervalSinceReferenceDate: 2_000_000)
         var settings = UserSettings()

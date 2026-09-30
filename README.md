@@ -33,6 +33,8 @@ That is the complete setup for GitHub.com. Local checkout status and archive-bac
 
 The main menu shows issue and pull request pressure, stars, forks, recent activity, CI state, releases, and contribution heatmaps. Filters narrow the list to pinned repositories, local checkouts, or repositories with active work.
 
+Choose **Repository heatmap → Submenu** in **Preferences → General → Display** to show activity inside each repository menu. Changing **Heatmap color** takes effect the next time you open that submenu.
+
 Each repository opens a submenu with recent GitHub activity and, when a local checkout is configured, its branch, upstream, dirty files, ahead/behind state, and worktrees. RepoBar can open the checkout in Finder or a terminal and can fast-forward clean repositories without discarding local changes.
 
 **Preferences → Repositories** searches the repositories available to the active account. Search covers names, descriptions, languages, and topics; visibility rules remain visible when an account temporarily loses access, which makes permission problems easier to diagnose.
