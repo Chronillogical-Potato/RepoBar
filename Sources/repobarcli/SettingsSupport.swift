@@ -28,6 +28,7 @@ enum SettingsKey: String, CaseIterable {
     case releaseNotificationPrereleases = "release-notification-prereleases"
     case cardDensity = "card-density"
     case accentTone = "accent-tone"
+    case colorScheme = "color-scheme"
     case activityScope = "activity-scope"
     case heatmapDisplay = "heatmap-display"
     case heatmapSpan = "heatmap-span"
@@ -87,6 +88,8 @@ enum SettingsKey: String, CaseIterable {
             self = .cardDensity
         case "accent-tone", "accent":
             self = .accentTone
+        case "color-scheme", "appearance", "theme":
+            self = .colorScheme
         case "activity-scope", "scope":
             self = .activityScope
         case "heatmap-display", "heatmap":
@@ -226,6 +229,17 @@ func applySetting(_ key: SettingsKey, value: String, settings: inout UserSetting
         }
         settings.appearance.accentTone = tone
         return tone.rawValue
+    case .colorScheme:
+        let scheme: AppColorScheme
+        switch value.lowercased() {
+        case "light": scheme = .light
+        case "dark": scheme = .dark
+        case "system", "default", "auto": scheme = .system
+        default:
+            throw ValidationError("Invalid color-scheme value: \(value)")
+        }
+        settings.appearance.colorScheme = scheme
+        return scheme.rawValue
     case .activityScope:
         guard let scope = GlobalActivityScope(argument: value) else {
             throw ValidationError("Invalid activity-scope value: \(value)")
@@ -313,6 +327,7 @@ func settingsSummaryLines(settings: UserSettings) -> [String] {
         "Release notification pre-releases: \(settings.gitHubReleaseNotifications.includePrereleases ? "on" : "off")",
         "Card density: \(settings.appearance.cardDensity.rawValue)",
         "Accent tone: \(settings.appearance.accentTone.rawValue)",
+        "Color scheme: \(settings.appearance.colorScheme.rawValue)",
         "Activity scope: \(settings.appearance.activityScope.rawValue)",
         "Heatmap display: \(settings.heatmap.display.rawValue)",
         "Heatmap span: \(settings.heatmap.span.months)m",

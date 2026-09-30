@@ -66,6 +66,34 @@ struct SettingsCommandTests {
     }
 
     @Test
+    func `settings set supports color scheme and aliases`() throws {
+        var settings = UserSettings()
+
+        #expect(SettingsKey(argument: "color-scheme") == .colorScheme)
+        #expect(SettingsKey(argument: "appearance") == .colorScheme)
+        #expect(SettingsKey(argument: "theme") == .colorScheme)
+
+        #expect(try applySetting(.colorScheme, value: "Dark", settings: &settings) == "dark")
+        #expect(settings.appearance.colorScheme == .dark)
+        #expect(settingsSummaryLines(settings: settings).contains("Color scheme: dark"))
+
+        #expect(try applySetting(.colorScheme, value: "light", settings: &settings) == "light")
+        #expect(settings.appearance.colorScheme == .light)
+
+        #expect(try applySetting(.colorScheme, value: "default", settings: &settings) == "system")
+        #expect(settings.appearance.colorScheme == .system)
+    }
+
+    @Test
+    func `color scheme setting rejects unknown values`() {
+        var settings = UserSettings()
+
+        #expect(throws: ValidationError.self) {
+            _ = try applySetting(.colorScheme, value: "sepia", settings: &settings)
+        }
+    }
+
+    @Test
     func `notification click setting rejects unknown values`() {
         var settings = UserSettings()
 

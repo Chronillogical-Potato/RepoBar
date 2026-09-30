@@ -1,4 +1,4 @@
-import Foundation
+import AppKit
 import RepoBarCore
 
 struct SettingsUpdateEffects: OptionSet {
@@ -9,6 +9,7 @@ struct SettingsUpdateEffects: OptionSet {
     static let heatmapRange = Self(rawValue: 1 << 2)
     static let refresh = Self(rawValue: 1 << 3)
     static let cancelInFlightRefresh = Self(rawValue: 1 << 4)
+    static let appAppearance = Self(rawValue: 1 << 5)
 }
 
 extension AppState {
@@ -23,6 +24,9 @@ extension AppState {
         if effects.contains(.launchAtLogin) {
             LaunchAtLoginHelper.set(enabled: self.session.settings.launchAtLogin)
         }
+        if effects.contains(.appAppearance) {
+            self.applyColorScheme()
+        }
         if effects.contains(.heatmapRange) {
             self.updateHeatmapRange(now: Date())
         }
@@ -34,5 +38,12 @@ extension AppState {
         } else if effects.contains(.refresh) {
             self.requestRefresh()
         }
+    }
+
+    func applyColorScheme() {
+        // NSApp is nil in unit tests that never create an NSApplication.
+        guard let app = NSApp else { return }
+
+        app.appearance = self.session.settings.appearance.colorScheme.nsAppearance
     }
 }

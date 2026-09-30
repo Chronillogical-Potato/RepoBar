@@ -50,6 +50,11 @@ struct GeneralSettingsView: View {
                 }
 
                 Section {
+                    Picker("Appearance", selection: self.setting(\.appearance.colorScheme, effects: .appAppearance)) {
+                        ForEach(AppColorScheme.allCases, id: \.self) { scheme in
+                            Text(scheme.label).tag(scheme)
+                        }
+                    }
                     Toggle("Show contribution header", isOn: self.setting(\.appearance.showContributionHeader))
                     Toggle(
                         "Show REST and GraphQL quotas in menu bar",

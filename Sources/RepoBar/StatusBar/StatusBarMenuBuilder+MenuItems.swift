@@ -55,7 +55,8 @@ extension StatusBarMenuBuilder {
             ),
             changelogPresentation: changelogPresentation,
             changelogHeadline: changelogHeadline,
-            isPinned: isPinned
+            isPinned: isPinned,
+            isLightAppearance: self.isLightAppearance
         )
         if let cached = self.repoSubmenusByFullName[repo.title], cached.signature == signature {
             return cached.menu

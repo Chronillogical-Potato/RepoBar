@@ -5,6 +5,8 @@
 - Fix direct debug packaging on macOS Bash 3.2 while preserving strict shell checks and universal release builds (thanks @prakersh). (#134)
 - Stop packaging when signing or requested notarization fails instead of reporting success for an unfinished app bundle.
 - Apply a changed Heatmap color to repository submenu heatmaps instead of keeping the previous color until the repository's data changes (thanks @drluckyspin). (#141)
+- Add an Appearance setting (Light, Dark, System Default) to General settings so RepoBar's menus and windows can follow macOS or stay in a fixed mode; also available as `repobar settings set color-scheme` (thanks @drluckyspin). (#139)
+- Recolor the main menu and repository submenus on the first open after the appearance switches between Light and Dark instead of showing the previous appearance once (thanks @drluckyspin). (#139)
 
 ## 0.9.3 - 2026-09-19
 

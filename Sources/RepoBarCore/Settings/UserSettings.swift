@@ -258,6 +258,7 @@ public struct AppearanceSettings: Equatable, Codable {
     public var cardDensity: CardDensity = .comfortable
     public var accentTone: AccentTone = .githubGreen
     public var activityScope: GlobalActivityScope = .myActivity
+    public var colorScheme: AppColorScheme = .system
 
     public init() {}
 
@@ -267,6 +268,7 @@ public struct AppearanceSettings: Equatable, Codable {
         case cardDensity
         case accentTone
         case activityScope
+        case colorScheme
     }
 
     public init(from decoder: Decoder) throws {
@@ -276,6 +278,7 @@ public struct AppearanceSettings: Equatable, Codable {
         self.cardDensity = try container.decodeIfPresent(CardDensity.self, forKey: .cardDensity) ?? .comfortable
         self.accentTone = try container.decodeIfPresent(AccentTone.self, forKey: .accentTone) ?? .githubGreen
         self.activityScope = try container.decodeIfPresent(GlobalActivityScope.self, forKey: .activityScope) ?? .myActivity
+        self.colorScheme = try container.decodeIfPresent(AppColorScheme.self, forKey: .colorScheme) ?? .system
     }
 }
 
@@ -541,6 +544,20 @@ public enum AccentTone: String, CaseIterable, Equatable, Codable {
         switch self {
         case .system: "System accent"
         case .githubGreen: "GitHub greens"
+        }
+    }
+}
+
+public enum AppColorScheme: String, CaseIterable, Equatable, Codable {
+    case light
+    case dark
+    case system
+
+    public var label: String {
+        switch self {
+        case .light: "Light"
+        case .dark: "Dark"
+        case .system: "System Default"
         }
     }
 }

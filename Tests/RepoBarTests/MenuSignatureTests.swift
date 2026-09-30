@@ -68,7 +68,8 @@ struct MenuSignatureTests {
             ),
             changelogPresentation: nil,
             changelogHeadline: nil,
-            isPinned: false
+            isPinned: false,
+            isLightAppearance: true
         )
 
         let updatedRepo = Repository(
@@ -98,7 +99,8 @@ struct MenuSignatureTests {
             ),
             changelogPresentation: nil,
             changelogHeadline: nil,
-            isPinned: false
+            isPinned: false,
+            isLightAppearance: true
         )
 
         #expect(signatureA != signatureB)
@@ -133,7 +135,8 @@ struct MenuSignatureTests {
                 recentCounts: RepoRecentCountSignature(commits: nil, commitsDigest: nil),
                 changelogPresentation: nil,
                 changelogHeadline: nil,
-                isPinned: false
+                isPinned: false,
+                isLightAppearance: true
             )
         }
         var settings = UserSettings()
@@ -170,6 +173,7 @@ struct MenuSignatureTests {
         let signatureA = MenuBuildSignature(
             account: AccountSignature(.loggedOut),
             settings: MenuSettingsSignature(settings: settings, selection: .all),
+            isLightAppearance: true,
             hasLoadedRepositories: true,
             rateLimitReset: nil,
             rateLimits: RateLimitMenuSignature(.empty),
@@ -188,6 +192,7 @@ struct MenuSignatureTests {
         let signatureB = MenuBuildSignature(
             account: AccountSignature(.loggedOut),
             settings: MenuSettingsSignature(settings: settings, selection: .all),
+            isLightAppearance: true,
             hasLoadedRepositories: true,
             rateLimitReset: nil,
             rateLimits: RateLimitMenuSignature(.empty),
@@ -203,6 +208,54 @@ struct MenuSignatureTests {
         )
 
         #expect(signatureA != signatureB)
+    }
+
+    @Test
+    func `menu build signature changes with effective appearance`() {
+        let now = Date(timeIntervalSinceReferenceDate: 2_500_000)
+        let settings = UserSettings()
+
+        #expect(Self.emptyMenuBuildSignature(settings: settings, isLightAppearance: true, now: now)
+            != Self.emptyMenuBuildSignature(settings: settings, isLightAppearance: false, now: now))
+    }
+
+    @Test
+    func `repo submenu signature changes with effective appearance`() {
+        let now = Date(timeIntervalSinceReferenceDate: 2_600_000)
+        let range = HeatmapRange(start: now.addingTimeInterval(-86400), end: now)
+        let repo = Repository(
+            id: "3",
+            name: "Heatmap",
+            owner: "me",
+            sortOrder: 0,
+            error: nil,
+            rateLimitedUntil: nil,
+            ciStatus: .unknown,
+            openIssues: 0,
+            openPulls: 0,
+            latestRelease: nil,
+            latestActivity: nil,
+            activityEvents: [],
+            traffic: nil,
+            heatmap: []
+        )
+        let display = RepositoryDisplayModel(repo: repo, now: now)
+        var settings = UserSettings()
+        settings.heatmap.display = .submenu
+        func signature(isLightAppearance: Bool) -> RepoSubmenuSignature {
+            RepoSubmenuSignature(
+                repo: display,
+                settings: settings,
+                heatmapRange: range,
+                recentCounts: RepoRecentCountSignature(commits: nil, commitsDigest: nil),
+                changelogPresentation: nil,
+                changelogHeadline: nil,
+                isPinned: false,
+                isLightAppearance: isLightAppearance
+            )
+        }
+
+        #expect(signature(isLightAppearance: true) != signature(isLightAppearance: false))
     }
 
     @Test
@@ -230,6 +283,30 @@ struct MenuSignatureTests {
         )
 
         #expect(ActionsSnapshotSignature.digest(for: [idle]) != ActionsSnapshotSignature.digest(for: [busy]))
+    }
+
+    private static func emptyMenuBuildSignature(
+        settings: UserSettings,
+        isLightAppearance: Bool,
+        now: Date
+    ) -> MenuBuildSignature {
+        MenuBuildSignature(
+            account: AccountSignature(.loggedOut),
+            settings: MenuSettingsSignature(settings: settings, selection: .all),
+            isLightAppearance: isLightAppearance,
+            hasLoadedRepositories: true,
+            rateLimitReset: nil,
+            rateLimits: RateLimitMenuSignature(.empty),
+            lastError: nil,
+            contribution: ContributionSignature(user: nil, error: nil, heatmapCount: 0),
+            globalActivity: ActivitySignature(events: [], error: nil),
+            globalCommits: CommitSignature(commits: [], error: nil),
+            heatmapRangeStart: now.timeIntervalSinceReferenceDate,
+            heatmapRangeEnd: now.timeIntervalSinceReferenceDate,
+            reposDigest: RepoSignature.digest(for: []),
+            actionsDigest: 0,
+            timeBucket: Int(now.timeIntervalSinceReferenceDate / 60)
+        )
     }
 
     private static func actionsSnapshot(runner: RunnerSummary, now: Date) -> ActionsOrgSnapshot {

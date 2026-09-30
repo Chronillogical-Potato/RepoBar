@@ -85,6 +85,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         configureImagePipeline()
+        self.menuManager?.appState.applyColorScheme()
         self.menuManager?.appState.start()
         UNUserNotificationCenter.current().delegate = RepoBarNotificationResponseHandler.shared
         NotificationCenter.default.addObserver(

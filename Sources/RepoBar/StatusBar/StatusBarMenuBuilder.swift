@@ -35,6 +35,7 @@ final class StatusBarMenuBuilder {
         let signature = MenuBuildSignature(
             account: AccountSignature(session.account),
             settings: MenuSettingsSignature(settings: settings, selection: session.menuRepoSelection),
+            isLightAppearance: self.isLightAppearance,
             hasLoadedRepositories: session.hasLoadedRepositories,
             rateLimitReset: session.rateLimitReset,
             rateLimits: RateLimitMenuSignature(session.rateLimitDisplayState),
@@ -408,6 +409,9 @@ final class StatusBarMenuBuilder {
     }
 
     var isLightAppearance: Bool {
-        NSApp.effectiveAppearance.bestMatch(from: [.aqua, .darkAqua]) == .aqua
+        // NSApp is nil in unit tests that never create an NSApplication.
+        guard let app = NSApp else { return true }
+
+        return app.effectiveAppearance.bestMatch(from: [.aqua, .darkAqua]) == .aqua
     }
 }

@@ -24,6 +24,11 @@ struct UserSettingsCoverageTests {
 
         #expect(AccentTone.system.label == "System accent")
         #expect(AccentTone.githubGreen.label == "GitHub greens")
+        #expect(AppColorScheme.light.label == "Light")
+        #expect(AppColorScheme.dark.label == "Dark")
+        #expect(AppColorScheme.system.label == "System Default")
+        #expect(AppColorScheme.allCases == [.light, .dark, .system])
+        #expect(AppearanceSettings().colorScheme == .system)
         #expect(AppearanceSettings().showRateLimitMeterInMenuBar)
         #expect(GitHubReferenceMonitorSettings().enabled == false)
         #expect(ActionsSettings().showActionsInMenu == false)
@@ -46,6 +51,33 @@ struct UserSettingsCoverageTests {
 
         #expect(GitHubArchiveSettings().preferArchiveWhenRateLimited)
         #expect(GitHubArchiveFormat.discrawlSnapshot.label == "Discrawl snapshot")
+    }
+
+    @Test
+    func `appearance settings decode legacy json without color scheme`() throws {
+        let legacyJSON = """
+        {
+            "showContributionHeader": false,
+            "cardDensity": "compact"
+        }
+        """
+        let data = try #require(legacyJSON.data(using: .utf8))
+        let decoded = try JSONDecoder().decode(AppearanceSettings.self, from: data)
+
+        #expect(decoded.colorScheme == .system)
+        #expect(decoded.showContributionHeader == false)
+        #expect(decoded.cardDensity == .compact)
+    }
+
+    @Test
+    func `appearance settings round trip color scheme`() throws {
+        var settings = UserSettings()
+        settings.appearance.colorScheme = .dark
+
+        let data = try JSONEncoder().encode(settings)
+        let decoded = try JSONDecoder().decode(UserSettings.self, from: data)
+
+        #expect(decoded.appearance.colorScheme == .dark)
     }
 
     @Test

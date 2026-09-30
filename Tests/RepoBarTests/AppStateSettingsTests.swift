@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 @testable import RepoBar
 import RepoBarCore
@@ -32,6 +33,28 @@ struct AppStateSettingsTests {
 
         #expect(appState.session.heatmapRange != previousRange)
         #expect(appState.session.settings.heatmap.span == .oneMonth)
+    }
+
+    @Test
+    func `color scheme setting persists without starting runtime`() throws {
+        let suiteName = "com.steipete.repobar.settings-update-tests.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suiteName))
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+        let store = SettingsStore(defaults: defaults)
+        let appState = AppState(settingsStore: store)
+
+        appState.updateSetting(\.appearance.colorScheme, to: .dark, effects: .appAppearance)
+
+        #expect(appState.session.settings.appearance.colorScheme == .dark)
+        #expect(store.load().appearance.colorScheme == .dark)
+        #expect(appState.isStarted == false)
+    }
+
+    @Test
+    func `color scheme maps to AppKit appearance`() {
+        #expect(AppColorScheme.system.nsAppearance == nil)
+        #expect(AppColorScheme.light.nsAppearance?.name == .aqua)
+        #expect(AppColorScheme.dark.nsAppearance?.name == .darkAqua)
     }
 
     @Test

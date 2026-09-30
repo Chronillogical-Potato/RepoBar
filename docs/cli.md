@@ -137,6 +137,7 @@ Fatal command errors are written to stderr and exit with status 1, keeping stdou
 - `show-rate-limit-meter` (true|false)
 - `card-density` (comfortable|compact)
 - `accent-tone` (system|github-green)
+- `color-scheme` (light|dark|system)
 - `activity-scope` (all|my)
 - `heatmap-display` (inline|submenu)
 - `heatmap-span` (1m|3m|6m|12m)
