@@ -3,6 +3,30 @@
     <channel>
         <title>RepoBar</title>
         <item>
+            <title>0.10.0</title>
+            <pubDate>Thu, 01 Oct 2026 09:56:47 -0700</pubDate>
+            <link>https://raw.githubusercontent.com/steipete/RepoBar/main/appcast.xml</link>
+            <sparkle:version>34</sparkle:version>
+            <sparkle:shortVersionString>0.10.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<h2>RepoBar 0.10.0</h2>
+<p><strong>Highlights:</strong> Choose Light, Dark, or System appearance, with menus and heatmaps that refresh their colors reliably.</p>
+<ul>
+<li>Add an Appearance setting (Light, Dark, System Default) to General settings so RepoBar&#x27;s menus and windows can follow macOS or stay in a fixed mode; also available as <code>repobar settings set color-scheme</code> (thanks @drluckyspin). (#139)</li>
+<li>Recolor the main menu and repository submenus on the first open after the appearance switches between Light and Dark instead of showing the previous appearance once (thanks @drluckyspin). (#139)</li>
+<li>Apply a changed Heatmap color to repository submenu heatmaps instead of keeping the previous color until the repository&#x27;s data changes (thanks @drluckyspin). (#141)</li>
+<li>Fix direct debug packaging on macOS Bash 3.2 while preserving strict shell checks and universal release builds (thanks @prakersh). (#134)</li>
+<li>Stop packaging when signing or requested notarization fails instead of reporting success for an unfinished app bundle.</li>
+<li>Refresh Kingfisher image loading, Unicode terminal-width tables, and Chalk/ANSI tooling while retaining the existing Swift 6.2 and Node.js 22.13 minimums.</li>
+</ul>
+<ul>
+<li>Update development tooling to pnpm 11.28.2 after the release cooldown, retaining the Node.js 22.13 minimum.</li>
+</ul>
+<p><a href="https://github.com/steipete/RepoBar/blob/main/CHANGELOG.md">View full changelog</a></p>
+]]></description>
+            <enclosure url="https://github.com/steipete/RepoBar/releases/download/v0.10.0/RepoBar-0.10.0.zip" length="26849282" type="application/octet-stream" sparkle:edSignature="KhsIn9tA+yQyLhPZ7PacuetNH9RQk6JXtX7ZtEyNO+i1AIJyNMY7ep5kjPFFWVwqtAU3/v5bJKBkwbWOmJWNBA=="/>
+        </item>
+        <item>
             <title>0.9.3</title>
             <pubDate>Sun, 20 Sep 2026 01:05:33 -0700</pubDate>
             <link>https://raw.githubusercontent.com/steipete/RepoBar/main/appcast.xml</link>
@@ -42,28 +66,6 @@
 <p><a href="https://github.com/steipete/RepoBar/blob/main/CHANGELOG.md">View full changelog</a></p>
 ]]></description>
             <enclosure url="https://github.com/steipete/RepoBar/releases/download/v0.9.2/RepoBar-0.9.2.zip" length="26665659" type="application/octet-stream" sparkle:edSignature="DdY+BfNV6FiYiZ7CkcrzPrAa/hD5C4AIGAd9clCbFHKE4ykTxH/V2n0HzXpjfjc66rvOCPRN+/gI55JpqGt6Dw=="/>
-        </item>
-        <item>
-            <title>0.9.1</title>
-            <pubDate>Sun, 13 Sep 2026 19:24:15 -0700</pubDate>
-            <link>https://raw.githubusercontent.com/steipete/RepoBar/main/appcast.xml</link>
-            <sparkle:version>31</sparkle:version>
-            <sparkle:shortVersionString>0.9.1</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-            <description><![CDATA[<h2>RepoBar 0.9.1</h2>
-<p><strong>Highlights:</strong> GitHub secondary rate limits are honored, iOS builds and workflow-run display are restored, and submenu timeouts no longer cancel other menus.</p>
-<ul>
-<li>Honor GitHub secondary retry delays in REST and GraphQL, pause queued requests, and retain stats cooldowns across redirects.</li>
-<li>Restore iOS builds and workflow-run display, and keep local Git reference probes bounded and offline.</li>
-<li>Respect repository submenu timeouts, preserve requests needed by other menus, and allow retries after bounded cancellation cleanup.</li>
-<li>Honor developer CLI token/host overrides and Enterprise REST paths, keep JSON stdout clean, and implement the documented GraphQL raw-response flag.</li>
-<li>Update SwiftLog to 1.15.1 and Zod to 4.6.2 for app logging and GraphQL developer tooling.</li>
-<li><strong>Compatibility:</strong> Development tooling requires Node.js 22.13 or newer, matching the existing pnpm requirement; update pnpm to 11.26 and pin CI tooling with verified downloads.</li>
-<li>Update the CI Node.js runtime to Node 26 while retaining the Node.js 22.13 development minimum.</li>
-</ul>
-<p><a href="https://github.com/steipete/RepoBar/blob/main/CHANGELOG.md">View full changelog</a></p>
-]]></description>
-            <enclosure url="https://github.com/steipete/RepoBar/releases/download/v0.9.1/RepoBar-0.9.1.zip" length="26605543" type="application/octet-stream" sparkle:edSignature="Zm9QGNQGhpFg+5ixqAAl577dPFAnyrVeGq7KOhGa/JltKnhTM/OumBDQqhnYD0LzU+YiJgNgU/QQd76ihqoeCQ=="/>
         </item>
         <item>
             <title>0.8.7</title>
@@ -112,6 +114,28 @@
 <p><a href="https://github.com/steipete/RepoBar/blob/main/CHANGELOG.md">View full changelog</a></p>
 ]]></description>
             <enclosure url="https://github.com/steipete/RepoBar/releases/download/v0.8.5/RepoBar-0.8.5.zip" length="26005767" type="application/octet-stream" sparkle:edSignature="E2HSNZTIwNlTlJ1++RVhNw+G9Sk2quZ0+BSc8+ke3KV1cKNMWlW81RIjB1pAOKcFKxHkzu7R6LENpbv436P2Bg=="/>
+        </item>
+        <item>
+            <title>0.9.1</title>
+            <pubDate>Sun, 13 Sep 2026 19:24:15 -0700</pubDate>
+            <link>https://raw.githubusercontent.com/steipete/RepoBar/main/appcast.xml</link>
+            <sparkle:version>31</sparkle:version>
+            <sparkle:shortVersionString>0.9.1</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<h2>RepoBar 0.9.1</h2>
+<p><strong>Highlights:</strong> GitHub secondary rate limits are honored, iOS builds and workflow-run display are restored, and submenu timeouts no longer cancel other menus.</p>
+<ul>
+<li>Honor GitHub secondary retry delays in REST and GraphQL, pause queued requests, and retain stats cooldowns across redirects.</li>
+<li>Restore iOS builds and workflow-run display, and keep local Git reference probes bounded and offline.</li>
+<li>Respect repository submenu timeouts, preserve requests needed by other menus, and allow retries after bounded cancellation cleanup.</li>
+<li>Honor developer CLI token/host overrides and Enterprise REST paths, keep JSON stdout clean, and implement the documented GraphQL raw-response flag.</li>
+<li>Update SwiftLog to 1.15.1 and Zod to 4.6.2 for app logging and GraphQL developer tooling.</li>
+<li><strong>Compatibility:</strong> Development tooling requires Node.js 22.13 or newer, matching the existing pnpm requirement; update pnpm to 11.26 and pin CI tooling with verified downloads.</li>
+<li>Update the CI Node.js runtime to Node 26 while retaining the Node.js 22.13 development minimum.</li>
+</ul>
+<p><a href="https://github.com/steipete/RepoBar/blob/main/CHANGELOG.md">View full changelog</a></p>
+]]></description>
+            <enclosure url="https://github.com/steipete/RepoBar/releases/download/v0.9.1/RepoBar-0.9.1.zip" length="26605543" type="application/octet-stream" sparkle:edSignature="Zm9QGNQGhpFg+5ixqAAl577dPFAnyrVeGq7KOhGa/JltKnhTM/OumBDQqhnYD0LzU+YiJgNgU/QQd76ihqoeCQ=="/>
         </item>
     </channel>
 </rss>
