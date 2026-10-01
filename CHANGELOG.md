@@ -1,5 +1,7 @@
 # Changelog
 
+## Unreleased
+
 ## 0.10.0 - 2026-09-30
 
 **Highlights:** Choose Light, Dark, or System appearance, with menus and heatmaps that refresh their colors reliably.
