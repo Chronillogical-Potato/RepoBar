@@ -1,5 +1,7 @@
 # Changelog
 
+## Unreleased
+
 ## 0.10.2 - 2026-10-18
 
 **Highlights:** RepoBar no longer rewrites hundreds of cache files on every refresh; repository details persist as one coalesced snapshot.
