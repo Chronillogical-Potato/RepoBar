@@ -3,6 +3,22 @@
     <channel>
         <title>RepoBar</title>
         <item>
+            <title>0.10.3</title>
+            <pubDate>Tue, 20 Oct 2026 23:32:43 +0000</pubDate>
+            <link>https://raw.githubusercontent.com/steipete/RepoBar/main/appcast.xml</link>
+            <sparkle:version>37</sparkle:version>
+            <sparkle:shortVersionString>0.10.3</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+            <description>&lt;html&gt;&lt;body&gt;&lt;pre&gt;## 0.10.3 - 2026-10-20
+
+**Highlights:** Updated image handling fixes cached-image rendering and Retina image processing while preserving macOS 15 support.
+
+- Update Kingfisher to 8.14.0 for cached-image rendering and Retina image-processing fixes, and pnpm to 11.28.6 for install and credential-handling fixes, preserving the Swift 6.2 and Node.js 22.13 minimums.
+- Move macOS CI and release jobs to `xcode-27`, preserve universal macOS 15 builds, and smoke-test the Intel CLI through Rosetta.
+&lt;/pre&gt;&lt;/body&gt;&lt;/html&gt;</description>
+            <enclosure url="https://github.com/steipete/RepoBar/releases/download/v0.10.3/RepoBar-0.10.3.zip" length="26839559" type="application/octet-stream" sparkle:edSignature="lXbIARsezY92teBB2suGrUc5sto9sJEQw7S6r9ASif/JehfJZoxskTFiDFo+YqgDOGGhsNRbYWcy+tLcPo5ZBw==" />
+        </item>
+        <item>
             <title>0.10.2</title>
             <pubDate>Sun, 18 Oct 2026 23:19:03 +0000</pubDate>
             <link>https://raw.githubusercontent.com/steipete/RepoBar/main/appcast.xml</link>
